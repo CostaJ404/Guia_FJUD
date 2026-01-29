@@ -1,0 +1,1062 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Guia de Vacância - FUNPRESP-JUD</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        html {
+            scroll-behavior: smooth;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #0e243a 0%, #1a3a5a 50%, #3b71c1 100%);
+            background-attachment: fixed;
+            min-height: 100vh;
+            padding: 40px 20px;
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        body::before {
+            content: '';
+            position: fixed;
+            width: 500px;
+            height: 500px;
+            background: radial-gradient(circle, rgba(59,113,193,0.3) 0%, transparent 70%);
+            top: -250px;
+            right: -250px;
+            border-radius: 50%;
+            animation: float 6s ease-in-out infinite;
+            z-index: 0;
+        }
+
+        body::after {
+            content: '';
+            position: fixed;
+            width: 400px;
+            height: 400px;
+            background: radial-gradient(circle, rgba(244,168,72,0.2) 0%, transparent 70%);
+            bottom: -200px;
+            left: -200px;
+            border-radius: 50%;
+            animation: float 8s ease-in-out infinite reverse;
+            z-index: 0;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0px) rotate(0deg); }
+            50% { transform: translateY(-20px) rotate(5deg); }
+        }
+
+        .container {
+            max-width: 900px;
+            width: 100%;
+            background: white;
+            border-radius: 25px;
+            box-shadow: 0 25px 70px rgba(0,0,0,0.4);
+            overflow: hidden;
+            position: relative;
+            z-index: 1;
+            animation: slideUp 0.6s ease-out;
+            margin-bottom: 30px;
+        }
+
+        @keyframes slideUp {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .header {
+            background: linear-gradient(135deg, #0e243a 0%, #3b71c1 100%);
+            color: white;
+            padding: 50px 40px;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .header::before {
+            content: '';
+            position: absolute;
+            width: 200px;
+            height: 200px;
+            background: rgba(255,255,255,0.1);
+            border-radius: 50%;
+            top: -100px;
+            right: -100px;
+            animation: pulse 3s ease-in-out infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); opacity: 0.1; }
+            50% { transform: scale(1.1); opacity: 0.15; }
+        }
+
+        .logo {
+            max-width: 180px;
+            height: auto;
+            margin-bottom: 20px;
+            position: relative;
+            z-index: 2;
+        }
+
+        .header h1 {
+            font-size: 2.8em;
+            margin-bottom: 15px;
+            position: relative;
+            z-index: 1;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
+        }
+
+        .header p {
+            font-size: 1.2em;
+            opacity: 0.95;
+            position: relative;
+            z-index: 1;
+        }
+
+        .progress-container {
+            background: linear-gradient(to right, #f0f0f0 0%, #e8e8e8 100%);
+            height: 10px;
+            position: relative;
+            box-shadow: inset 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .progress-bar {
+            height: 100%;
+            background: linear-gradient(90deg, #f4a848 0%, #ff9a3c 50%, #3b71c1 100%);
+            width: 0%;
+            transition: width 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: 0 0 10px rgba(244,168,72,0.5);
+            position: relative;
+        }
+
+        .progress-bar::after {
+            content: '';
+            position: absolute;
+            right: 0;
+            top: 0;
+            width: 20px;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.4));
+        }
+
+        .content { padding: 60px 50px; }
+
+        .step {
+            display: none;
+            animation: fadeIn 0.5s;
+        }
+
+        .step.active { display: block; }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateX(-20px); }
+            to { opacity: 1; transform: translateX(0); }
+        }
+
+        .step-indicator {
+            text-align: center;
+            margin-bottom: 30px;
+            font-size: 0.9em;
+            color: #999;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            font-weight: 600;
+        }
+
+        .question {
+            font-size: 2em;
+            color: #0e243a;
+            margin-bottom: 20px;
+            font-weight: 700;
+            line-height: 1.3;
+            background: linear-gradient(135deg, #0e243a 0%, #3b71c1 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .description {
+            font-size: 1.15em;
+            color: #666;
+            margin-bottom: 40px;
+            line-height: 1.7;
+        }
+
+        .radio-group {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .radio-option {
+            position: relative;
+        }
+
+        .radio-option input[type="radio"] {
+            position: absolute;
+            opacity: 0;
+            cursor: pointer;
+        }
+
+        .radio-label {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%);
+            border: 3px solid #e8e8e8;
+            padding: 28px 35px;
+            border-radius: 18px;
+            cursor: pointer;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .radio-label::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(244,168,72,0.1), transparent);
+            transition: left 0.6s;
+        }
+
+        .radio-option input[type="radio"]:checked + .radio-label::before {
+            left: 100%;
+        }
+
+        .radio-option input[type="radio"]:checked + .radio-label {
+            background: linear-gradient(135deg, #f4a848 0%, #ff9a3c 100%);
+            border-color: #f4a848;
+            color: white;
+            transform: scale(1.03);
+            box-shadow: 0 10px 30px rgba(244,168,72,0.4);
+        }
+
+        .radio-option:hover .radio-label {
+            border-color: #f4a848;
+            background: linear-gradient(135deg, #fff8f0 0%, #fef5e9 100%);
+            transform: translateX(8px);
+            box-shadow: 0 8px 20px rgba(244,168,72,0.15);
+        }
+
+        .radio-option input[type="radio"]:checked + .radio-label:hover {
+            background: linear-gradient(135deg, #f4a848 0%, #ff9a3c 100%);
+        }
+
+        .radio-icon {
+            width: 60px;
+            height: 60px;
+            background: linear-gradient(135deg, #f4a848 0%, #ff9a3c 100%);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2em;
+            flex-shrink: 0;
+            box-shadow: 0 4px 12px rgba(244,168,72,0.3);
+            transition: all 0.3s;
+        }
+
+        .radio-option input[type="radio"]:checked + .radio-label .radio-icon {
+            background: white;
+            box-shadow: 0 6px 16px rgba(0,0,0,0.2);
+            transform: rotate(360deg);
+        }
+
+        .radio-text strong {
+            display: block;
+            font-size: 1.3em;
+            margin-bottom: 8px;
+        }
+
+        .radio-text small {
+            display: block;
+            opacity: 0.85;
+            line-height: 1.5;
+        }
+
+        .input-group { margin: 40px 0; }
+
+        .input-group label {
+            display: block;
+            font-size: 1.4em;
+            color: #0e243a;
+            margin-bottom: 18px;
+            font-weight: 600;
+        }
+
+        .input-group input[type="number"] {
+            width: 100%;
+            padding: 22px 25px;
+            font-size: 1.4em;
+            border: 3px solid #e8e8e8;
+            border-radius: 15px;
+            transition: all 0.3s ease;
+            background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%);
+        }
+
+        .input-group input[type="number"]:focus {
+            outline: none;
+            border-color: #f4a848;
+            box-shadow: 0 0 0 6px rgba(244,168,72,0.15);
+            background: white;
+        }
+
+        .nav-buttons {
+            display: flex;
+            gap: 20px;
+            margin-top: 50px;
+        }
+
+        .btn {
+            flex: 1;
+            padding: 22px 40px;
+            font-size: 1.3em;
+            border: none;
+            border-radius: 15px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 0;
+            height: 0;
+            border-radius: 50%;
+            background: rgba(255,255,255,0.3);
+            transform: translate(-50%, -50%);
+            transition: width 0.6s, height 0.6s;
+        }
+
+        .btn:active::before {
+            width: 300px;
+            height: 300px;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #f4a848 0%, #ff9a3c 100%);
+            color: white;
+            box-shadow: 0 8px 25px rgba(244,168,72,0.4);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 15px 35px rgba(244,168,72,0.6);
+        }
+
+        .btn-secondary {
+            background: linear-gradient(135deg, #e8e8e8 0%, #d8d8d8 100%);
+            color: #666;
+        }
+
+        .btn-secondary:hover {
+            background: linear-gradient(135deg, #d8d8d8 0%, #c8c8c8 100%);
+            transform: translateY(-2px);
+        }
+
+        .btn-download {
+            background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+            color: white;
+            box-shadow: 0 8px 25px rgba(40,167,69,0.4);
+            margin-top: 20px;
+            width: 100%;
+        }
+
+        .btn-download:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 15px 35px rgba(40,167,69,0.6);
+        }
+
+        .alert {
+            background: linear-gradient(135deg, #fff3cd 0%, #ffecb5 100%);
+            border-left: 6px solid #f4a848;
+            padding: 25px;
+            border-radius: 12px;
+            margin: 25px 0;
+            color: #856404;
+            box-shadow: 0 4px 12px rgba(244,168,72,0.15);
+        }
+
+        .alert strong {
+            display: block;
+            margin-bottom: 12px;
+            font-size: 1.25em;
+        }
+
+        .alert.info {
+            background: linear-gradient(135deg, #d1ecf1 0%, #bee5eb 100%);
+            border-color: #17a2b8;
+            color: #0c5460;
+        }
+
+        .alert.success {
+            background: linear-gradient(135deg, #d4edda 0%, #c3e6cb 100%);
+            border-color: #28a745;
+            color: #155724;
+        }
+
+        .info-card {
+            background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+            border-left: 6px solid #3b71c1;
+            padding: 25px;
+            border-radius: 12px;
+            margin: 25px 0;
+            box-shadow: 0 4px 12px rgba(59,113,193,0.15);
+        }
+
+        .info-card h3 {
+            color: #0e243a;
+            margin-bottom: 15px;
+            font-size: 1.3em;
+        }
+
+        .info-card p {
+            line-height: 1.7;
+            margin-bottom: 10px;
+        }
+
+        .result-box {
+            background: linear-gradient(135deg, #0e243a 0%, #3b71c1 100%);
+            color: white;
+            padding: 50px;
+            border-radius: 20px;
+            margin-top: 30px;
+            box-shadow: 0 15px 40px rgba(14,36,58,0.4);
+        }
+
+        .result-box h2 {
+            font-size: 2.3em;
+            margin-bottom: 25px;
+        }
+
+        .success-box {
+            background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+            color: white;
+            padding: 50px;
+            border-radius: 20px;
+            text-align: center;
+            box-shadow: 0 15px 40px rgba(40,167,69,0.4);
+        }
+
+        .success-box h2 {
+            font-size: 2.8em;
+            margin-bottom: 25px;
+        }
+
+        .success-icon {
+            font-size: 7em;
+            margin-bottom: 25px;
+            display: inline-block;
+        }
+
+        .termo-box {
+            background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%);
+            color: #0e243a;
+            padding: 40px;
+            border-radius: 18px;
+            margin-top: 30px;
+            border: 3px solid #e8e8e8;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.08);
+        }
+
+        .termo-box h3 {
+            margin-bottom: 20px;
+            color: #3b71c1;
+            font-size: 1.5em;
+        }
+
+        .termo-nome {
+            font-size: 1.4em;
+            font-weight: 700;
+            color: #f4a848;
+            margin: 20px 0;
+            padding: 20px;
+            background: linear-gradient(135deg, #fff8f0 0%, #fef5e9 100%);
+            border-radius: 12px;
+            border-left: 6px solid #f4a848;
+            box-shadow: 0 4px 12px rgba(244,168,72,0.15);
+        }
+
+        .opcoes-lista {
+            list-style: none;
+            padding: 0;
+        }
+
+        .opcoes-lista li {
+            padding: 18px 25px;
+            margin: 12px 0;
+            background: linear-gradient(135deg, #e8f5e9 0%, #d4edda 100%);
+            border-radius: 12px;
+            border-left: 5px solid #28a745;
+            font-size: 1.2em;
+            transition: all 0.3s;
+        }
+
+        .opcoes-lista li:hover {
+            transform: translateX(8px);
+            box-shadow: 0 4px 12px rgba(40,167,69,0.2);
+        }
+
+        .resumo-situacao {
+            background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+            padding: 25px;
+            border-radius: 12px;
+            margin-top: 30px;
+            border: 2px solid #dee2e6;
+        }
+
+        .resumo-situacao p {
+            margin: 12px 0;
+            font-size: 1.1em;
+        }
+
+        .resumo-situacao strong {
+            color: #3b71c1;
+        }
+
+        .download-animation {
+            display: inline-block;
+            animation: downloadPulse 1s infinite;
+        }
+
+        @keyframes downloadPulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.2); }
+        }
+
+        .footer {
+            background: linear-gradient(135deg, #0e243a 0%, #1a3a5a 100%);
+            color: white;
+            text-align: center;
+            padding: 25px 20px;
+            position: relative;
+            z-index: 1;
+            width: 100%;
+            max-width: 900px;
+            border-radius: 25px;
+            box-shadow: 0 25px 70px rgba(0,0,0,0.4);
+        }
+
+        .footer p {
+            margin: 5px 0;
+            opacity: 0.9;
+            font-size: 0.95em;
+        }
+
+        .footer a {
+            color: #f4a848;
+            text-decoration: none;
+            transition: all 0.3s;
+        }
+
+        .footer a:hover {
+            color: #ff9a3c;
+            text-decoration: underline;
+        }
+
+        @media (max-width: 768px) {
+            .header h1 { font-size: 2em; }
+            .logo { max-width: 140px; }
+            .content { padding: 40px 25px; }
+            .question { font-size: 1.6em; }
+            .radio-label { padding: 22px 25px; }
+            .nav-buttons { flex-direction: column; }
+            .footer { border-radius: 15px; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <img src="./logo.png" alt="FUNPRESP-JUD" class="logo">
+            <h1>📊 Guia de Vacância</h1>
+            <p>FUNPRESP-JUD - Descubra seus direitos e opções</p>
+        </div>
+
+        <div class="progress-container">
+            <div class="progress-bar" id="progressBar"></div>
+        </div>
+
+        <div class="content">
+            <!-- STEP 1 -->
+            <div class="step active" id="step1">
+                <div class="step-indicator">Passo 1 de 3</div>
+                <div class="question">Qual é o seu status atual no plano?</div>
+                <div class="description">Informe se você está ativo no plano ou se cancelou sua inscrição</div>
+                
+                <div class="radio-group">
+                    <div class="radio-option">
+                        <input type="radio" id="participante" name="status" value="participante">
+                        <label for="participante" class="radio-label">
+                            <div class="radio-icon">👤</div>
+                            <div class="radio-text">
+                                <strong>Sim, sou participante ativo</strong>
+                                <small>Continuo inscrito e contribuindo para o plano</small>
+                            </div>
+                        </label>
+                    </div>
+                    <div class="radio-option">
+                        <input type="radio" id="cancelado" name="status" value="cancelado">
+                        <label for="cancelado" class="radio-label">
+                            <div class="radio-icon">🚫</div>
+                            <div class="radio-text">
+                                <strong>Cancelei minha inscrição</strong>
+                                <small>Já solicitei o cancelamento do plano</small>
+                            </div>
+                        </label>
+                    </div>
+                </div>
+
+                <div class="nav-buttons">
+                    <button class="btn btn-primary" onclick="proximoPasso(1)">Continuar →</button>
+                </div>
+            </div>
+
+            <!-- STEP 2 -->
+            <div class="step" id="step2">
+                <div class="step-indicator">Passo 2 de 3</div>
+                <div class="question">Qual o tipo de cessação do vínculo?</div>
+                <div class="description">Selecione a situação que melhor descreve seu caso</div>
+                
+                <div class="radio-group">
+                    <div class="radio-option">
+                        <input type="radio" id="vacancia" name="tipo" value="vacancia">
+                        <label for="vacancia" class="radio-label">
+                            <div class="radio-icon">📝</div>
+                            <div class="radio-text">
+                                <strong>Vacância do Cargo</strong>
+                                <small>Exoneração, posse em outro cargo inacumulável, demissão, etc.</small>
+                            </div>
+                        </label>
+                    </div>
+                    <div class="radio-option">
+                        <input type="radio" id="aposentadoria" name="tipo" value="aposentadoria">
+                        <label for="aposentadoria" class="radio-label">
+                            <div class="radio-icon">🏅</div>
+                            <div class="radio-text">
+                                <strong>Aposentadoria</strong>
+                                <small>Aposentadoria concedida pelo RGPS ou RPPS</small>
+                            </div>
+                        </label>
+                    </div>
+                </div>
+
+                <div class="nav-buttons">
+                    <button class="btn btn-secondary" onclick="voltarPasso(2)">← Voltar</button>
+                    <button class="btn btn-primary" onclick="proximoPasso(2)">Continuar →</button>
+                </div>
+            </div>
+
+            <!-- STEP 3 -->
+            <div class="step" id="step3apos">
+                <div class="step-indicator">Passo 3 de 3</div>
+                <div class="question">Qual o tipo de aposentadoria?</div>
+                <div class="description">Diferentes tipos têm regras específicas para o benefício</div>
+                
+                <div class="radio-group">
+                    <div class="radio-option">
+                        <input type="radio" id="compulsoria" name="tipoApos" value="compulsoria">
+                        <label for="compulsoria" class="radio-label">
+                            <div class="radio-icon">⏳</div>
+                            <div class="radio-text">
+                                <strong>Aposentadoria Compulsória ou Voluntária</strong>
+                                <small>Necessário 5 anos (60 meses) de plano para direito ao benefício</small>
+                            </div>
+                        </label>
+                    </div>
+                    <div class="radio-option">
+                        <input type="radio" id="invalidez" name="tipoApos" value="invalidez">
+                        <label for="invalidez" class="radio-label">
+                            <div class="radio-icon">🏥</div>
+                            <div class="radio-text">
+                                <strong>Invalidez ou Falecimento</strong>
+                                <small>Direito ao benefício garantido independente do tempo de contribuição</small>
+                            </div>
+                        </label>
+                    </div>
+                </div>
+
+                <div class="nav-buttons">
+                    <button class="btn btn-secondary" onclick="voltarPasso('3apos')">← Voltar</button>
+                    <button class="btn btn-primary" onclick="proximoPasso('3apos')">Continuar →</button>
+                </div>
+            </div>
+
+            <!-- STEP 4 -->
+            <div class="step" id="step4">
+                <div class="step-indicator">Última Etapa</div>
+                <div class="question">Quanto tempo você contribuiu para o plano?</div>
+                <div class="description">Informe quantos meses completos você contribuiu para a FUNPRESP-JUD</div>
+                
+                <div class="input-group">
+                    <label for="meses">⏱️ Meses de contribuição:</label>
+                    <input type="number" id="meses" min="0" max="600" placeholder="Ex: 48">
+                </div>
+
+                <div class="info-card">
+                    <h3>💡 Por que isso importa?</h3>
+                    <p><strong>Menos de 6 meses:</strong> Opções limitadas (Autopatrocínio ou Resgate)</p>
+                    <p><strong>6 meses ou mais:</strong> Mais opções disponíveis (Portabilidade e outras)</p>
+                    <p><strong>60 meses (5 anos):</strong> Direito ao benefício de aposentadoria</p>
+                </div>
+
+                <div class="nav-buttons">
+                    <button class="btn btn-secondary" onclick="voltarPasso(4)">← Voltar</button>
+                    <button class="btn btn-primary" onclick="calcularResultado()">Ver Resultado 🎯</button>
+                </div>
+            </div>
+
+            <!-- RESULTADO -->
+            <div class="step" id="resultado"></div>
+        </div>
+    </div>
+
+    <div class="footer">
+        <p><strong>FUNPRESP-JUD</strong></p>
+        <p>Fundação de Previdência Complementar do Poder Judiciário</p>
+        <p style="margin-top: 15px; font-size: 0.85em; opacity: 0.8;">
+            © 2026 FUNPRESP-JUD - Todos os direitos reservados
+        </p>
+    </div>
+
+    <script>
+        const state = {
+            status: null,
+            tipo: null,
+            tipoApos: null,
+            meses: 0
+        };
+
+        function updateProgress(percent) {
+            document.getElementById('progressBar').style.width = percent + '%';
+        }
+
+        function mostrarPasso(passoId) {
+            document.querySelectorAll('.step').forEach(s => s.classList.remove('active'));
+            document.getElementById(passoId).classList.add('active');
+        }
+
+        function proximoPasso(atual) {
+            if (atual === 1) {
+                const status = document.querySelector('input[name="status"]:checked');
+                if (!status) {
+                    alert('⚠️ Por favor, selecione uma opção');
+                    return;
+                }
+                state.status = status.value;
+                updateProgress(30);
+                mostrarPasso('step2');
+            }
+            else if (atual === 2) {
+                const tipo = document.querySelector('input[name="tipo"]:checked');
+                if (!tipo) {
+                    alert('⚠️ Por favor, selecione uma opção');
+                    return;
+                }
+                state.tipo = tipo.value;
+                
+                if (tipo.value === 'aposentadoria') {
+                    updateProgress(60);
+                    mostrarPasso('step3apos');
+                } else {
+                    updateProgress(90);
+                    mostrarPasso('step4');
+                }
+            }
+            else if (atual === '3apos') {
+                const tipoApos = document.querySelector('input[name="tipoApos"]:checked');
+                if (!tipoApos) {
+                    alert('⚠️ Por favor, selecione uma opção');
+                    return;
+                }
+                state.tipoApos = tipoApos.value;
+                
+                if (tipoApos.value === 'invalidez') {
+                    mostrarResultadoBeneficioDireto();
+                } else {
+                    updateProgress(90);
+                    mostrarPasso('step4');
+                }
+            }
+        }
+
+        function voltarPasso(atual) {
+            if (atual === 2) {
+                updateProgress(15);
+                mostrarPasso('step1');
+            }
+            else if (atual === '3apos') {
+                updateProgress(30);
+                mostrarPasso('step2');
+            }
+            else if (atual === 4) {
+                if (state.tipo === 'aposentadoria') {
+                    updateProgress(60);
+                    mostrarPasso('step3apos');
+                } else {
+                    updateProgress(30);
+                    mostrarPasso('step2');
+                }
+            }
+        }
+
+        function mostrarResultadoBeneficioDireto() {
+            updateProgress(100);
+            const html = `
+                <div class="success-box">
+                    <div class="success-icon">✓</div>
+                    <h2>Você tem direito ao BENEFÍCIO!</h2>
+                    <p style="font-size:1.3em;margin-top:25px">
+                        Por ser aposentadoria por <strong>invalidez ou falecimento</strong>, 
+                        você tem direito ao benefício <strong>independente do tempo</strong> de contribuição ao plano.
+                    </p>
+                    <div style="background:rgba(255,255,255,0.2);padding:30px;border-radius:15px;margin-top:35px;text-align:left">
+                        <h3 style="margin-bottom:20px;font-size:1.5em">📋 Próximos passos:</h3>
+                        <ol style="margin-left:25px;line-height:2.2;font-size:1.1em">
+                            <li>📄 Reúna seus documentos (portaria de aposentadoria/laudo médico, RG, CPF)</li>
+                            <li>👨‍👩‍👧‍👦 No caso de <strong>falecimento</strong>, os dependentes deverão requerer</li>
+                            <li>📤 Protocole requerimento de benefício na FUNPRESP-JUD</li>
+                            <li>⏱️ Aguarde o cálculo do seu benefício</li>
+                            <li>💰 Comece a receber!</li>
+                        </ol>
+                    </div>
+                    <button class="btn btn-primary" onclick="location.reload()" style="margin-top:30px;background:white;color:#28a745">
+                        🔄 Fazer Nova Consulta
+                    </button>
+                </div>
+            `;
+            document.getElementById('resultado').innerHTML = html;
+            mostrarPasso('resultado');
+        }
+
+        function calcularResultado() {
+            const mesesInput = document.getElementById('meses').value;
+            if (!mesesInput || mesesInput < 0) {
+                alert('⚠️ Por favor, informe os meses de contribuição');
+                return;
+            }
+
+            state.meses = parseInt(mesesInput);
+            updateProgress(100);
+
+            if (state.tipo === 'aposentadoria' && state.meses >= 60) {
+                mostrarResultadoBeneficio();
+            } else {
+                mostrarResultadoInstitutos();
+            }
+        }
+
+        function mostrarResultadoBeneficio() {
+            const html = `
+                <div class="success-box">
+                    <div class="success-icon">✓</div>
+                    <h2>Você tem direito ao BENEFÍCIO!</h2>
+                    <p style="font-size:1.3em;margin-top:25px">
+                        Com <strong>${state.meses} meses</strong> de contribuição, você atingiu os <strong>60 meses (5 anos)</strong> necessários para o benefício de aposentadoria.
+                    </p>
+                    <div style="background:rgba(255,255,255,0.2);padding:30px;border-radius:15px;margin-top:35px;text-align:left">
+                        <h3 style="margin-bottom:20px;font-size:1.5em">📋 Próximos passos:</h3>
+                        <ol style="margin-left:25px;line-height:2.2;font-size:1.1em">
+                            <li>📄 Reúna seus documentos (portaria de aposentadoria, RG, CPF)</li>
+                            <li>📤 Protocole requerimento de benefício na FUNPRESP-JUD</li>
+                            <li>⏱️ Aguarde o cálculo do seu benefício</li>
+                            <li>💰 Comece a receber!</li>
+                        </ol>
+                    </div>
+                    <button class="btn btn-primary" onclick="location.reload()" style="margin-top:30px;background:white;color:#28a745">
+                        🔄 Fazer Nova Consulta
+                    </button>
+                </div>
+            `;
+            document.getElementById('resultado').innerHTML = html;
+            mostrarPasso('resultado');
+        }
+
+        function mostrarResultadoInstitutos() {
+            const cancelado = state.status === 'cancelado';
+            const meses = state.meses;
+            const isAposentado = state.tipo === 'aposentadoria';
+
+            let termo = {};
+            
+            // REGRA: Aposentados NUNCA têm direito ao BPD
+            if (isAposentado) {
+                if (cancelado) {
+                    // NOVO: Cancelado + Aposentado
+                    if (meses < 6) {
+                        termo = {
+                            nome: 'RESGATE',
+                            arquivo: 'TERMO DE OPÇÃO - RESGATE.pdf',
+                            opcoes: ['Resgate']
+                        };
+                    } else {
+                        termo = {
+                            nome: 'PORTABILIDADE - RESGATE',
+                            arquivo: 'TERMO DE OPÇÃO - PORTABILIDADE - RESGATE.pdf',
+                            opcoes: ['Portabilidade', 'Resgate']
+                        };
+                    }
+                } else {
+                    // Não cancelado + Aposentado
+                    if (meses < 6) {
+                        termo = {
+                            nome: 'AUTOPATROCÍNIO - RESGATE',
+                            arquivo: 'TERMO DE OPÇÃO - AUTOPATROCÍNIO - RESGATE.pdf',
+                            opcoes: ['Autopatrocínio', 'Resgate']
+                        };
+                    } else {
+                        termo = {
+                            nome: 'AUTOPATROCÍNIO - PORTABILIDADE - RESGATE',
+                            arquivo: 'TERMO DE OPÇÃO - AUTOPATROCÍNIO - PORTABILIDADE - RESGATE.pdf',
+                            opcoes: ['Autopatrocínio', 'Portabilidade', 'Resgate']
+                        };
+                    }
+                }
+            }
+            // Participante em VACÂNCIA (não aposentado)
+            else {
+                if (cancelado) {
+                    if (meses < 6) {
+                        termo = {
+                            nome: 'RESGATE',
+                            arquivo: 'TERMO DE OPÇÃO - RESGATE.pdf',
+                            opcoes: ['Resgate']
+                        };
+                    } else {
+                        termo = {
+                            nome: 'BPD - PORTABILIDADE - RESGATE',
+                            arquivo: 'TERMO DE OPÇÃO - BPD - PORTABILIDADE - RESGATE.pdf',
+                            opcoes: ['BPD', 'Portabilidade', 'Resgate']
+                        };
+                    }
+                } else {
+                    if (meses < 6) {
+                        termo = {
+                            nome: 'AUTOPATROCÍNIO - RESGATE',
+                            arquivo: 'TERMO DE OPÇÃO - AUTOPATROCÍNIO - RESGATE.pdf',
+                            opcoes: ['Autopatrocínio', 'Resgate']
+                        };
+                    } else {
+                        termo = {
+                            nome: 'COMPLETO',
+                            arquivo: 'TERMO DE OPÇÃO - COMPLETO.pdf',
+                            opcoes: ['Autopatrocínio', 'BPD', 'Portabilidade', 'Resgate']
+                        };
+                    }
+                }
+            }
+
+            const opcoesHtml = termo.opcoes.map(op => {
+                const icons = {
+                    'Autopatrocínio': '👤',
+                    'BPD': '📊',
+                    'Portabilidade': '🔄',
+                    'Resgate': '💵'
+                };
+                return `<li>${icons[op] || '✓'} <strong>${op}</strong></li>`;
+            }).join('');
+
+            const html = `
+                <div class="result-box">
+                    <h2>📋 Seus Institutos Disponíveis</h2>
+                    <p style="font-size:1.2em;margin-top:20px">Identificamos as opções corretas para sua situação!</p>
+                </div>
+                
+                <div class="termo-box">
+                    <h3>📄 Termo de Opção Correto:</h3>
+                    <div class="termo-nome">TERMO DE OPÇÃO - ${termo.nome}</div>
+                    
+                    <h3 style="margin-top:35px">✅ Opções disponíveis para você:</h3>
+                    <ul class="opcoes-lista">${opcoesHtml}</ul>
+                    
+                    <div class="resumo-situacao">
+                        <h3 style="color:#0e243a;margin-bottom:20px;font-size:1.4em">📊 Resumo da sua situação:</h3>
+                        <p><strong>Status:</strong> ${cancelado ? '🚫 Cancelado' : '👤 Participante Ativo'}</p>
+                        <p><strong>Tipo:</strong> ${isAposentado ? '🏅 Aposentadoria' : '📝 Vacância'}</p>
+                        <p><strong>Tempo no plano:</strong> ⏱️ ${meses} ${meses === 1 ? 'mês' : 'meses'}</p>
+                        <p><strong>Institutos disponíveis:</strong> ${termo.opcoes.length}</p>
+                    </div>
+                    
+                    <div class="alert success" style="margin-top:30px">
+                        <strong><span class="download-animation">📥</span> Baixe seu Termo de Opção</strong>
+                        <p>Clique no botão abaixo para baixar o formulário correto em PDF!</p>
+                    </div>
+                    
+                    <button class="btn btn-download" onclick="baixarPDF('${termo.arquivo}')">
+                        📥 Baixar ${termo.arquivo}
+                    </button>
+                    
+                    <div class="alert" style="margin-top:25px">
+                        <strong>📌 Próximos Passos:</strong>
+                        <ol style="margin-left:20px;margin-top:15px;line-height:1.9">
+                            <li>📥 Baixe o PDF clicando no botão acima</li>
+                            <li>✏️ Preencha com seus dados pessoais completos</li>
+                            <li>☑️ Escolha UMA das opções disponíveis</li>
+                            <li>✍️ Assine o documento</li>
+                            <li>📤 Protocole na FUNPRESP-JUD dentro do prazo de <strong>30 dias</strong></li>
+                        </ol>
+                    </div>
+                </div>
+                
+                <div class="nav-buttons" style="margin-top:40px">
+                    <button class="btn btn-primary" onclick="location.reload()" style="width:100%">
+                        🔄 Fazer Nova Consulta
+                    </button>
+                </div>
+            `;
+
+            document.getElementById('resultado').innerHTML = html;
+            mostrarPasso('resultado');
+        }
+
+        function baixarPDF(nomeArquivo) {
+            // CONFIGURAÇÃO: Defina aqui o caminho base onde os PDFs estão hospedados
+            
+            // Opção 1: Pasta local (mesma pasta do HTML)
+            const caminhoBase = './pdfs/';
+            
+            // Opção 2: URL externa (descomente a linha abaixo e comente a de cima)
+            // const caminhoBase = 'https://seusite.com/pdfs/';
+            
+            // Opção 3: GitHub Pages (exemplo)
+            // const caminhoBase = 'https://seuusuario.github.io/seuprojeto/pdfs/';
+            
+            const urlCompleta = caminhoBase + encodeURIComponent(nomeArquivo);
+            
+            // Cria um link temporário e força o download
+            const link = document.createElement('a');
+            link.href = urlCompleta;
+            link.download = nomeArquivo;
+            link.target = '_blank';
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+            
+            // Mostra mensagem de confirmação
+            setTimeout(() => {
+                alert(`✅ Download iniciado!\n\n📄 Arquivo: ${nomeArquivo}\n\nSe o download não começar automaticamente, verifique se os PDFs estão na pasta correta.`);
+            }, 500);
+        }
+
+        // Inicialização
+        updateProgress(15);
+    </script>
+</body>
+</html>
