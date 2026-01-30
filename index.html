@@ -571,6 +571,75 @@
             text-decoration: underline;
         }
 
+        .contact-box {
+            background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%);
+            border: 2px solid #3b71c1;
+            border-radius: 12px;
+            padding: 20px;
+            margin: 20px 0;
+            box-shadow: 0 4px 12px rgba(59,113,193,0.15);
+        }
+
+        .contact-box h4 {
+            color: #0e243a;
+            margin-bottom: 15px;
+            font-size: 1.2em;
+            text-align: center;
+        }
+
+        .contact-item {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            padding: 12px 15px;
+            margin: 8px 0;
+            background: white;
+            border-radius: 8px;
+            border-left: 4px solid #f4a848;
+            transition: all 0.3s;
+        }
+
+        .contact-item:hover {
+            transform: translateX(5px);
+            box-shadow: 0 4px 12px rgba(244,168,72,0.2);
+        }
+
+        .contact-icon {
+            font-size: 1.5em;
+            min-width: 30px;
+            text-align: center;
+        }
+
+        .contact-info {
+            flex: 1;
+        }
+
+        .contact-label {
+            font-size: 0.85em;
+            color: #666;
+            display: block;
+            margin-bottom: 3px;
+        }
+
+        .contact-link {
+            color: #3b71c1;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 1.1em;
+            transition: all 0.3s;
+        }
+
+        .contact-link:hover {
+            color: #f4a848;
+            text-decoration: underline;
+        }
+
+        .contact-phone {
+            color: #0e243a;
+            font-weight: 600;
+            font-size: 1.1em;
+        }
+
         @media (max-width: 768px) {
             .header h1 { font-size: 2em; }
             .logo { max-width: 140px; }
@@ -617,8 +686,8 @@
                         <label for="cancelado" class="radio-label">
                             <div class="radio-icon">🚫</div>
                             <div class="radio-text">
-                                <strong>Não, não sou participante ativo</strong>
-                                <small>Cancelei minha inscrição</small>
+                                <strong>Cancelei minha inscrição</strong>
+                                <small>Já solicitei o cancelamento do plano</small>
                             </div>
                         </label>
                     </div>
@@ -684,7 +753,7 @@
                     <div class="radio-option">
                         <input type="radio" id="invalidez" name="tipoApos" value="invalidez">
                         <label for="invalidez" class="radio-label">
-                            <div class="radio-icon">🏥</div>
+                            <div class="radio-icon">📋</div>
                             <div class="radio-text">
                                 <strong>Invalidez ou Falecimento</strong>
                                 <small>Direito ao benefício garantido independente do tempo de contribuição</small>
@@ -706,20 +775,20 @@
                 <div class="description">Informe quantos meses completos você contribuiu para a FUNPRESP-JUD</div>
                 
                 <div class="input-group">
-                    <label for="meses">⏱️ Meses de contribuição:</label>
+                    <label for="meses">Meses de contribuição:</label>
                     <input type="number" id="meses" min="0" max="600" placeholder="Ex: 48">
                 </div>
 
                 <div class="info-card">
                     <h3>💡 Por que isso importa?</h3>
                     <p><strong>Menos de 6 meses:</strong> Opções limitadas (Autopatrocínio ou Resgate)</p>
-                    <p><strong>6 meses ou mais:</strong> Mais opções disponíveis (Portabilidade e outras)</p>
+                    <p><strong>6 meses ou mais:</strong> Mais opções disponíveis (Portabilidade e BPD)</p>
                     <p><strong>60 meses (5 anos):</strong> Direito ao benefício de aposentadoria</p>
                 </div>
 
                 <div class="nav-buttons">
                     <button class="btn btn-secondary" onclick="voltarPasso(4)">← Voltar</button>
-                    <button class="btn btn-primary" onclick="calcularResultado()">Ver Resultado 🎯</button>
+                    <button class="btn btn-primary" onclick="calcularResultado()">Ver Resultado</button>
                 </div>
             </div>
 
@@ -788,9 +857,15 @@
                 }
                 state.tipoApos = tipoApos.value;
                 
-                if (tipoApos.value === 'invalidez') {
+                // REGRA IMPORTANTE: Cancelado NUNCA tem direito ao benefício
+                // Mesmo que seja invalidez ou falecimento
+                const cancelado = state.status === 'cancelado';
+                
+                if (tipoApos.value === 'invalidez' && !cancelado) {
+                    // Somente participante ATIVO tem direito ao benefício por invalidez/falecimento
                     mostrarResultadoBeneficioDireto();
                 } else {
+                    // Cancelado vai sempre para institutos, mesmo sendo invalidez
                     updateProgress(90);
                     mostrarPasso('step4');
                 }
@@ -828,14 +903,40 @@
                         você tem direito ao benefício <strong>independente do tempo</strong> de contribuição ao plano.
                     </p>
                     <div style="background:rgba(255,255,255,0.2);padding:30px;border-radius:15px;margin-top:35px;text-align:left">
-                        <h3 style="margin-bottom:20px;font-size:1.5em">📋 Próximos passos:</h3>
+                        <h3 style="margin-bottom:20px;font-size:1.5em">Próximos passos:</h3>
                         <ol style="margin-left:25px;line-height:2.2;font-size:1.1em">
-                            <li>📄 Reúna seus documentos (portaria de aposentadoria/laudo médico, RG, CPF)</li>
-                            <li>👨‍👩‍👧‍👦 No caso de <strong>falecimento</strong>, os dependentes deverão requerer</li>
-                            <li>📤 Protocole requerimento de benefício na FUNPRESP-JUD</li>
-                            <li>⏱️ Aguarde o cálculo do seu benefício</li>
-                            <li>💰 Comece a receber!</li>
+                            <li>Reúna seus documentos (portaria de aposentadoria/laudo médico, RG, CPF)</li>
+                            <li>No caso de <strong>falecimento</strong>, os dependentes deverão requerer</li>
+                            <li>Protocole requerimento de benefício na FUNPRESP-JUD</li>
                         </ol>
+                        
+                        <div class="contact-box" style="margin-top:25px;background:rgba(255,255,255,0.95)">
+                            <h4>📞 Entre em contato com a FUNPRESP-JUD:</h4>
+                            
+                            <div class="contact-item">
+                                <div class="contact-icon">💬</div>
+                                <div class="contact-info">
+                                    <span class="contact-label">WhatsApp</span>
+                                    <a href="https://api.whatsapp.com/send/?phone=556140425515&text&type=phone_number&app_absent=0" target="_blank" class="contact-link">(61) 4042-5515</a>
+                                </div>
+                            </div>
+                            
+                            <div class="contact-item">
+                                <div class="contact-icon">📱</div>
+                                <div class="contact-info">
+                                    <span class="contact-label">Telefone</span>
+                                    <span class="contact-phone">(61) 3029-5070</span>
+                                </div>
+                            </div>
+                            
+                            <div class="contact-item">
+                                <div class="contact-icon">✉️</div>
+                                <div class="contact-info">
+                                    <span class="contact-label">E-mail</span>
+                                    <a href="mailto:sap@funprespjud.com.br" class="contact-link">sap@funprespjud.com.br</a>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                     <button class="btn btn-primary" onclick="location.reload()" style="margin-top:30px;background:white;color:#28a745">
                         🔄 Fazer Nova Consulta
@@ -856,7 +957,11 @@
             state.meses = parseInt(mesesInput);
             updateProgress(100);
 
-            if (state.tipo === 'aposentadoria' && state.meses >= 60) {
+            // REGRA: Cancelado NUNCA tem direito ao benefício
+            const cancelado = state.status === 'cancelado';
+            
+            if (state.tipo === 'aposentadoria' && state.meses >= 60 && !cancelado) {
+                // Somente participante ATIVO com 60+ meses tem direito ao benefício
                 mostrarResultadoBeneficio();
             } else {
                 mostrarResultadoInstitutos();
@@ -875,10 +980,36 @@
                         <h3 style="margin-bottom:20px;font-size:1.5em">📋 Próximos passos:</h3>
                         <ol style="margin-left:25px;line-height:2.2;font-size:1.1em">
                             <li>📄 Reúna seus documentos (portaria de aposentadoria, RG, CPF)</li>
-                            <li>📤 Protocole requerimento de benefício na FUNPRESP-JUD</li>
-                            <li>⏱️ Aguarde o cálculo do seu benefício</li>
-                            <li>💰 Comece a receber!</li>
+                            <li>Protocole requerimento de benefício na FUNPRESP-JUD</li>
                         </ol>
+                        
+                        <div class="contact-box" style="margin-top:25px;background:rgba(255,255,255,0.95)">
+                            <h4>📞 Entre em contato com a FUNPRESP-JUD:</h4>
+                            
+                            <div class="contact-item">
+                                <div class="contact-icon">💬</div>
+                                <div class="contact-info">
+                                    <span class="contact-label">WhatsApp</span>
+                                    <a href="https://api.whatsapp.com/send/?phone=556140425515&text&type=phone_number&app_absent=0" target="_blank" class="contact-link">(61) 4042-5515</a>
+                                </div>
+                            </div>
+                            
+                            <div class="contact-item">
+                                <div class="contact-icon">📞</div>
+                                <div class="contact-info">
+                                    <span class="contact-label">Telefone</span>
+                                    <span class="contact-phone">(61) 3029-5070</span>
+                                </div>
+                            </div>
+                            
+                            <div class="contact-item">
+                                <div class="contact-icon">✉️</div>
+                                <div class="contact-info">
+                                    <span class="contact-label">E-mail</span>
+                                    <a href="mailto:sap@funprespjud.com.br" class="contact-link">sap@funprespjud.com.br</a>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                     <button class="btn btn-primary" onclick="location.reload()" style="margin-top:30px;background:white;color:#28a745">
                         🔄 Fazer Nova Consulta
@@ -975,19 +1106,19 @@
 
             const html = `
                 <div class="result-box">
-                    <h2>📋 Seus Institutos Disponíveis</h2>
+                    <h2>Seus Institutos Disponíveis</h2>
                     <p style="font-size:1.2em;margin-top:20px">Identificamos as opções corretas para sua situação!</p>
                 </div>
                 
                 <div class="termo-box">
-                    <h3>📄 Termo de Opção Correto:</h3>
+                    <h3>Termo de Opção Correto:</h3>
                     <div class="termo-nome">TERMO DE OPÇÃO - ${termo.nome}</div>
                     
-                    <h3 style="margin-top:35px">✅ Opções disponíveis para você:</h3>
+                    <h3 style="margin-top:35px">Opções disponíveis para você:</h3>
                     <ul class="opcoes-lista">${opcoesHtml}</ul>
                     
                     <div class="resumo-situacao">
-                        <h3 style="color:#0e243a;margin-bottom:20px;font-size:1.4em">📊 Resumo da sua situação:</h3>
+                        <h3 style="color:#0e243a;margin-bottom:20px;font-size:1.4em">Resumo da sua situação:</h3>
                         <p><strong>Status:</strong> ${cancelado ? '🚫 Cancelado' : '👤 Participante Ativo'}</p>
                         <p><strong>Tipo:</strong> ${isAposentado ? '🏅 Aposentadoria' : '📝 Vacância'}</p>
                         <p><strong>Tempo no plano:</strong> ⏱️ ${meses} ${meses === 1 ? 'mês' : 'meses'}</p>
@@ -995,22 +1126,48 @@
                     </div>
                     
                     <div class="alert success" style="margin-top:30px">
-                        <strong><span class="download-animation">📥</span> Baixe seu Termo de Opção</strong>
+                        <strong>Baixe seu Termo de Opção</strong>
                         <p>Clique no botão abaixo para baixar o formulário correto em PDF!</p>
                     </div>
                     
                     <button class="btn btn-download" onclick="baixarPDF('${termo.arquivo}')">
-                        📥 Baixar ${termo.arquivo}
+                        <strong><span class="download-animation">📥</span> Baixar ${termo.arquivo}
                     </button>
                     
                     <div class="alert" style="margin-top:25px">
-                        <strong>📌 Próximos Passos:</strong>
+                        <strong>Próximos Passos:</strong>
                         <ol style="margin-left:20px;margin-top:15px;line-height:1.9">
-                            <li>📥 Baixe o PDF clicando no botão acima</li>
-                            <li>✏️ Preencha com seus dados pessoais completos</li>
-                            <li>☑️ Escolha UMA das opções disponíveis</li>
-                            <li>✍️ Assine o documento</li>
-                            <li>📤 Protocole na FUNPRESP-JUD dentro do prazo de <strong>30 dias</strong></li>
+                            <li>Baixe o PDF clicando no botão acima</li>
+                            <li>Preencha com seus dados pessoais completos</li>
+                            <li>Escolha UMA das opções disponíveis</li>
+                            <li>Assine o documento e protocole na FUNPRESP-JUD através dos canais:</li>
+                            <li style="list-style:none;margin-top:15px;">
+                                <div class="contact-box">
+                                    
+                                    <div class="contact-item">
+                                        <div class="contact-icon">💬</div>
+                                        <div class="contact-info">
+                                            <span class="contact-label">WhatsApp</span>
+                                            <a href="https://api.whatsapp.com/send/?phone=556140425515&text&type=phone_number&app_absent=0" target="_blank" class="contact-link">(61) 4042-5515</a>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="contact-item">
+                                        <div class="contact-icon">📞</div>
+                                        <div class="contact-info">
+                                            <span class="contact-label">Telefone</span>
+                                            <span class="contact-phone">(61) 3029-5070</span>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="contact-item">
+                                        <div class="contact-icon">✉️</div>
+                                        <div class="contact-info">
+                                            <span class="contact-label">E-mail</span>
+                                            <a href="mailto:sap@funprespjud.com.br" class="contact-link">sap@funprespjud.com.br</a>
+                                        </div>
+                                    </div>
+                            </li>
                         </ol>
                     </div>
                 </div>
@@ -1051,7 +1208,7 @@
             
             // Mostra mensagem de confirmação
             setTimeout(() => {
-                alert(`✅ Download iniciado!\n\n📄 Arquivo: ${nomeArquivo}\n\nSe o download não começar automaticamente, verifique se os PDFs estão na pasta correta.`);
+                alert(`✅ Download iniciado!\n\n📄 Arquivo: ${nomeArquivo}\n\n`);
             }, 500);
         }
 
