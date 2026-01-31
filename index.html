@@ -507,11 +507,55 @@
             border-left: 5px solid #28a745;
             font-size: 1.2em;
             transition: all 0.3s;
+            position: relative;
+            cursor: help;
         }
 
         .opcoes-lista li:hover {
             transform: translateX(8px);
             box-shadow: 0 4px 12px rgba(40,167,69,0.2);
+        }
+
+        /* Tooltip */
+        .tooltip {
+            position: relative;
+            display: inline-block;
+        }
+
+        .tooltip .tooltiptext {
+            visibility: hidden;
+            width: 320px;
+            background: linear-gradient(135deg, #0e243a 0%, #3b71c1 100%);
+            color: white;
+            text-align: left;
+            border-radius: 12px;
+            padding: 15px 18px;
+            position: absolute;
+            z-index: 1000;
+            bottom: 125%;
+            left: 50%;
+            margin-left: -160px;
+            opacity: 0;
+            transition: opacity 0.3s, visibility 0.3s;
+            font-size: 0.9em;
+            line-height: 1.6;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.3);
+        }
+
+        .tooltip .tooltiptext::after {
+            content: "";
+            position: absolute;
+            top: 100%;
+            left: 50%;
+            margin-left: -8px;
+            border-width: 8px;
+            border-style: solid;
+            border-color: #3b71c1 transparent transparent transparent;
+        }
+
+        .tooltip:hover .tooltiptext {
+            visibility: visible;
+            opacity: 1;
         }
 
         .resumo-situacao {
@@ -648,6 +692,11 @@
             .radio-label { padding: 22px 25px; }
             .nav-buttons { flex-direction: column; }
             .footer { border-radius: 15px; }
+            .tooltip .tooltiptext {
+                width: 280px;
+                margin-left: -140px;
+                font-size: 0.85em;
+            }
         }
     </style>
 </head>
@@ -813,6 +862,14 @@
             meses: 0
         };
 
+        // Descrições dos institutos
+        const descricoes = {
+            'Autopatrocínio': 'O participante permanece no plano pagando sua contribuição e a do patrocinador, para manter o nível de benefício.',
+            'BPD': 'Benefício Proporcional Diferido: o participante para de contribuir, mantém o saldo investido e aguarda o direito futuro ao benefício.',
+            'Portabilidade': 'O participante transfere todo o saldo acumulado para outro plano de previdência, sem receber o dinheiro.',
+            'Resgate': 'O participante recebe os valores acumulados no plano, à vista ou parcelado, com percentuais conforme o tempo de vínculo.'
+        };
+
         function updateProgress(percent) {
             document.getElementById('progressBar').style.width = percent + '%';
         }
@@ -857,15 +914,11 @@
                 }
                 state.tipoApos = tipoApos.value;
                 
-                // REGRA IMPORTANTE: Cancelado NUNCA tem direito ao benefício
-                // Mesmo que seja invalidez ou falecimento
                 const cancelado = state.status === 'cancelado';
                 
                 if (tipoApos.value === 'invalidez' && !cancelado) {
-                    // Somente participante ATIVO tem direito ao benefício por invalidez/falecimento
                     mostrarResultadoBeneficioDireto();
                 } else {
-                    // Cancelado vai sempre para institutos, mesmo sendo invalidez
                     updateProgress(90);
                     mostrarPasso('step4');
                 }
@@ -956,11 +1009,9 @@
             state.meses = parseInt(mesesInput);
             updateProgress(100);
 
-            // REGRA: Cancelado NUNCA tem direito ao benefício
             const cancelado = state.status === 'cancelado';
             
             if (state.tipo === 'aposentadoria' && state.meses >= 60 && !cancelado) {
-                // Somente participante ATIVO com 60+ meses tem direito ao benefício
                 mostrarResultadoBeneficio();
             } else {
                 mostrarResultadoInstitutos();
@@ -1026,10 +1077,8 @@
 
             let termo = {};
             
-            // REGRA: Aposentados NUNCA têm direito ao BPD
             if (isAposentado) {
                 if (cancelado) {
-                    // NOVO: Cancelado + Aposentado
                     if (meses < 6) {
                         termo = {
                             nome: 'RESGATE',
@@ -1044,7 +1093,6 @@
                         };
                     }
                 } else {
-                    // Não cancelado + Aposentado
                     if (meses < 6) {
                         termo = {
                             nome: 'AUTOPATROCÍNIO - RESGATE',
@@ -1060,7 +1108,6 @@
                     }
                 }
             }
-            // Participante em VACÂNCIA (não aposentado)
             else {
                 if (cancelado) {
                     if (meses < 6) {
@@ -1093,15 +1140,21 @@
                 }
             }
 
-            const opcoesHtml = termo.opcoes.map(op => {
-                const icons = {
-                    'Autopatrocínio': '👤',
-                    'BPD': '📊',
-                    'Portabilidade': '🔄',
-                    'Resgate': '💵'
-                };
-                return `<li>${icons[op] || '✓'} <strong>${op}</strong></li>`;
-            }).join('');
+            const icons = {
+                'Autopatrocínio': '👤',
+                'BPD': '📊',
+                'Portabilidade': '🔄',
+                'Resgate': '💵'
+            };
+
+            const opcoesHtml = termo.opcoes.map(op => 
+                `<li>
+                    <div class="tooltip">
+                        ${icons[op] || '✓'} <strong>${op}</strong>
+                        <span class="tooltiptext">${descricoes[op]}</span>
+                    </div>
+                </li>`
+            ).join('');
 
             const html = `
                 <div class="result-box">
@@ -1114,6 +1167,7 @@
                     <div class="termo-nome">TERMO DE OPÇÃO - ${termo.nome}</div>
                     
                     <h3 style="margin-top:35px">Opções disponíveis para você:</h3>
+                    <p style="font-size:0.95em;color:#666;margin-bottom:15px;font-style:italic;">💡 Passe o mouse sobre cada opção para ver mais detalhes</p>
                     <ul class="opcoes-lista">${opcoesHtml}</ul>
                     
                     <div class="resumo-situacao">
@@ -1130,7 +1184,7 @@
                     </div>
                     
                     <button class="btn btn-download" onclick="baixarPDF('${termo.arquivo}')">
-                        <strong><span class="download-animation">📥</span> Baixar ${termo.arquivo}
+                        <strong><span class="download-animation">📥</span> Baixar ${termo.arquivo}</strong>
                     </button>
                     
                     <div class="alert" style="margin-top:25px">
@@ -1166,6 +1220,7 @@
                                             <a href="mailto:sap@funprespjud.com.br" class="contact-link">sap@funprespjud.com.br</a>
                                         </div>
                                     </div>
+                                </div>
                             </li>
                         </ol>
                     </div>
@@ -1183,20 +1238,9 @@
         }
 
         function baixarPDF(nomeArquivo) {
-            // CONFIGURAÇÃO: Defina aqui o caminho base onde os PDFs estão hospedados
-            
-            // Opção 1: Pasta local (mesma pasta do HTML)
             const caminhoBase = './pdfs/';
-            
-            // Opção 2: URL externa (descomente a linha abaixo e comente a de cima)
-            // const caminhoBase = 'https://seusite.com/pdfs/';
-            
-            // Opção 3: GitHub Pages (exemplo)
-            // const caminhoBase = 'https://seuusuario.github.io/seuprojeto/pdfs/';
-            
             const urlCompleta = caminhoBase + encodeURIComponent(nomeArquivo);
             
-            // Cria um link temporário e força o download
             const link = document.createElement('a');
             link.href = urlCompleta;
             link.download = nomeArquivo;
@@ -1205,13 +1249,11 @@
             link.click();
             document.body.removeChild(link);
             
-            // Mostra mensagem de confirmação
             setTimeout(() => {
                 alert(`✅ Download iniciado!\n\n📄 Arquivo: ${nomeArquivo}\n\n`);
             }, 500);
         }
 
-        // Inicialização
         updateProgress(15);
     </script>
 </body>
