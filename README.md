@@ -1,4 +1,5 @@
 📘 Guia de Vacância – FUNPRESP-JUD
+
 Aplicação web interativa desenvolvida para orientar participantes da **FUNPRESP-JUD** sobre seus **direitos, opções e institutos previdenciários** em casos de **vacância do cargo** ou **aposentadoria**, considerando o status do participante e o tempo de contribuição ao plano.
 
 ---
